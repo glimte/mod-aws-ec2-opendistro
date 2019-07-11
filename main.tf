@@ -346,7 +346,8 @@ if [[ ${var.enable_logstash} == "true" ]]; then
 
   if [[ ${var.es_node_type == "none" } ]]; then
     apt remove opendistroforelasticsearch -y
-    apt remove elasticsearch-oss
+    apt remove elasticsearch-oss -y
+    apt autoremove -y
   fi
   ## Do some cooordinator specific config
   if [[ ${var.es_node_type} == "coordinator" ]]; then
