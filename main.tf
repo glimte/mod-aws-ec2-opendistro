@@ -344,7 +344,10 @@ if [[ ${var.enable_logstash} == "true" ]]; then
     echo -e "Pin: version 7.0.1" | tee -a /etc/apt/preferences.d/logstash-oss
     echo -e "Pin-Priority: 1000" | tee -a /etc/apt/preferences.d/logstash-oss
 
-
+  if [[ ${var.es_node_type == "none" } ]]; then
+    apt remove opendistroforelasticsearch -y
+    apt remove elasticsearch-oss
+  fi
   ## Do some cooordinator specific config
   if [[ ${var.es_node_type} == "coordinator" ]]; then
       echo -e "node.master: false" | tee -a /etc/elasticsearch/elasticsearch.yml
@@ -360,8 +363,10 @@ if [[ ${var.es_node_type} == "single" ]]; then
     sed -i -e 's/#cluster.name: my-application/cluster.name: ${var.es_cluster_name}/g' /etc/elasticsearch/elasticsearch.yml
     echo -e "discovery.seed_hosts: ${var.cluster_dns_hostname}.${var.cluster_dns_domain}" | tee -a /etc/elasticsearch/elasticsearch.yml
 fi
-systemctl enable elasticsearch.service
-systemctl start elasticsearch.service
+if [[ (${var.es_node_type} == "cluster") || (${var.es_node_type} == "single") || (${var.es_node_type} == "coordinator") ]]; then
+  systemctl enable elasticsearch.service
+  systemctl start elasticsearch.service
+fi
 
   EOF
   }
