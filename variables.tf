@@ -126,15 +126,14 @@ variable "password_kibanaserver" {
 }
 
 variable "es_node_type" {
-  description = "The type of node to install (optional, valid inputs are single, cluster or coordinator)"
-  default = "single"
+  description = "The type of node to install (Required, valid inputs are 'single', 'cluster', 'coordinator' or 'none')"
+  default = "none"
 }
 
 variable "es_cluster_name" {
   description = "The name to use for your cluster, defaults to elasticsearch"
   default = "elasticsearch"
 }
-
 
 variable "enable_kibana" {
   description = "Instructs to install kibana, if es_node_type is set to 'cluster' elastic will act as coordinating node only "
