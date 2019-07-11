@@ -143,3 +143,7 @@ variable "enable_kibana" {
 variable "ssh_keypair" {
   description = "(required)the name of the keypair to asociate with the ec2 instance" 
 }
+variable "enable_logstash" {
+  description = "Instructs to install Logstash, if connecting to a cluster set es_node_type as 'coordinator' node only"
+  default = false
+}

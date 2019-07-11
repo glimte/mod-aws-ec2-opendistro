@@ -336,6 +336,22 @@ if [[ ${var.enable_kibana} == "true" ]]; then
   fi
 fi
 
+## Use some logic to determine what to do with logstash
+if [[ ${var.enable_logstash} == "true" ]]; then
+    apt install logstash-oss
+    ## Pin package version for logstash
+    echo -e "Package: logstash-oss" | tee -a /etc/apt/preferences.d/logstash-oss
+    echo -e "Pin: version 7.0.1" | tee -a /etc/apt/preferences.d/logstash-oss
+    echo -e "Pin-Priority: 1000" | tee -a /etc/apt/preferences.d/logstash-oss
+
+
+  ## Do some cooordinator specific config
+  if [[ ${var.es_node_type} == "coordinator" ]]; then
+      echo -e "node.master: false" | tee -a /etc/elasticsearch/elasticsearch.yml
+      echo -e "node.data: false" | tee -a /etc/elasticsearch/elasticsearch.yml
+      echo -e "node.ingest: false" | tee -a /etc/elasticsearch/elasticsearch.yml
+  fi
+fi
 ## Some additional logic to determine ES node type and set config
 ## should add logic for initial master nodes too here
 if [[ ${var.es_node_type} == "single" ]]; then 
@@ -354,7 +370,7 @@ systemctl start elasticsearch.service
     content_type = "text/x-shellscript"
     content = <<EOF
 #!/bin/bash
-## Harden the es installation
+## Harden the es installation, prepopulate configuration file on es nodes to be applied
 if [[ (${var.es_node_type} == "cluster") || (${var.es_node_type} == "single") || (${var.es_node_type} == "coordinator") ]]; then
 
 cat > /usr/share/elasticsearch/plugins/opendistro_security/securityconfig/internal_users.yml <<'DELIM'
@@ -417,10 +433,11 @@ snapshotrestore:
 DELIM
 
 ## Wait for the Node to start, then apply internal_users.yml 
-curl -XGET https://localhost:9200 -u admin:admin --insecure | grep cluster_name
-while [ $? -ne 0 ]; do
-  bash /usr/share/elasticsearch/plugins/opendistro_security/tools/securityadmin.sh -cd /usr/share/elasticsearch/plugins/opendistro_security/securityconfig/ -icl -nhnv -cacert /etc/elasticsearch/root-ca.pem -cert /etc/elasticsearch/kirk.pem -key /etc/elasticsearch/kirk-key.pem
-done
+## This needs some logic to not brake existing cluster, when adding new nodes. Should only be applied once.
+# curl -XGET https://localhost:9200 -u admin:admin --insecure | grep cluster_name
+# while [ $? -ne 0 ]; do
+#   bash /usr/share/elasticsearch/plugins/opendistro_security/tools/securityadmin.sh -cd /usr/share/elasticsearch/plugins/opendistro_security/securityconfig/ -icl -nhnv -cacert /etc/elasticsearch/root-ca.pem -cert /etc/elasticsearch/kirk.pem -key /etc/elasticsearch/kirk-key.pem
+# done
 fi  
   EOF
   }
