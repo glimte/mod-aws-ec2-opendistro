@@ -11,9 +11,15 @@ https://aws.amazon.com/blogs/opensource/change-passwords-open-distro-for-elastic
 /usr/share/elasticsearch/plugins/opendistro_security/tools/hash.sh
 ```
 
+After deployment, and bootstrapping if a cluster is to be deployed, the security configuration needs to be applied.   
+Logon to one of the nods and run the following command. If you are using your own certificates please update acordingly.
+
+```
+sudo bash /usr/share/elasticsearch/plugins/opendistro_security/tools/securityadmin.sh -cd /usr/share/elasticsearch/plugins/opendistro_security/securityconfig/ -icl -nhnv -cacert /etc/elasticsearch/root-ca.pem -cert /etc/elasticsearch/kirk.pem -key /etc/elasticsearch/kirk-key.pem
+```
 
 
-## Initial Bootstrapping the elastic cluster:
+## Initial Bootstrapping an elastic cluster:
 
 When using the module with input type `cluster` to create the first initial master nodes, they need to be bootstrapped.   
 Logon to the first three nodes, add information about the two other initial master nodes to the hosts file (/etc/hosts/) or your shared dns service.   
