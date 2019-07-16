@@ -66,6 +66,8 @@ resource "aws_instance" "default" {
 
   vpc_security_group_ids      = var.vpc_security_group_ids
   associate_public_ip_address = var.enable_dynamic_public_ip
+  iam_instance_profile        = var.instance_profile
+
 
   tags = {
     Name = "${module.null_label.id}-0${count.index + 1}"

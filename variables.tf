@@ -146,3 +146,7 @@ variable "enable_logstash" {
   description = "Instructs to install Logstash, if connecting to a cluster set es_node_type as 'coordinator' node only"
   default = false
 }
+variable "instance_profile" {
+  description = "the instance profile to attach to the ec2 instance (Optional, Defaults to null)"
+  default = null
+}
