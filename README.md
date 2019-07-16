@@ -1,4 +1,6 @@
 # mod-aws-ec2-opendistro
+## Terraform module to handle all deployments variations of elasticsearch and opendistro.
+The module can either deploy singlehost setup with all parts of the ELK stack on one host, or it can be used to split up in seperate hosts with dedicated nodes for each role. It can also be used to deploy logstash with or without the elastic coordinating (client) role installed.  Initial configuration are provisioned to nodes
 
 ## Default usernames and Passwords 
 Passwords for the reserved users should be changed, this includes the user kibanaserver and admin.    
