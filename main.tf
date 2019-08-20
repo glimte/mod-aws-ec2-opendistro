@@ -265,7 +265,7 @@ while [ $? -ne 0 ]; do
     echo "waaaaiting...!"
     mkfs.ext4 /dev/xvdf -L ES_DATA
     mkdir -p ${var.volume_path}
-    mount -a
+    mount /dev/xvdf ${var.volume_path}
     mount | grep /dev/xvdf
 done
     echo "mounted..."
